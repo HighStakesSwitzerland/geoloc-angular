@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, button, div, span, small, label, td, th {
+  font-family: "Inter",sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+
+.leaflet-left .leaflet-control {
+  margin-left: 55px !important;
+}
