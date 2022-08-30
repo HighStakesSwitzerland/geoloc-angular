@@ -19,7 +19,7 @@ p-dropdown.networks-dropdown {
       top: 20px;
       left: calc(50% - 50px);
       z-index: 500;
-      width: 200px;
+      width: 250px;
     }
   }
 }
@@ -304,7 +304,7 @@ p-dialog {
         background: #28034b !important;
       }
     
-      .p-dialog-title {
+      .p-dialog-header {
         color: white;
         font-weight: unset !important;
         font-size: 20px !important;
@@ -320,6 +320,17 @@ p-dialog {
         background: $theme_color;
       }
     }
+  }
+}
+
+.header-logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  img {
+    width: 40px;
+    margin-right: 10px;
   }
 }
 

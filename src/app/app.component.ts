@@ -21,8 +21,7 @@ import { MoreDetailsComponent } from './more-details/more-details.component';
   providers: [DialogService]
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
-  // markerClusterGroup: L.MarkerClusterGroup;
-  markerClusterData: any = {};
+  markers: Array<any> = [];
   networks: any = {};
   totalNodes: Number = 0;
   selectedNetwork: any;
@@ -68,30 +67,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       { field: 'as', header: 'Data Center' }
     ];
 
-    this.dialogTableData = [
-      { moniker: '00000', nodeId: '94e69330d6f4cfe221cdd2ce49ee141e53e5f200', chain: 'osmosis-1', country: 'Singapore', isp: 'Leaseweb Asia Pacific pte. ltd', as: 'AS59253 Leaseweb Asia Pacific pte. ltd.' },
-      { moniker: '000fm', nodeId: 'cf84e3f178b32876dd1ea798a0c5d9b65e1f9dce', chain: 'osmosis-1', country: 'Pakistan', isp: 'Hetzner Online GmbH', as: 'AS24940 Hetzner Online GmbH' },
-      { moniker: '00220', nodeId: 'a113a5c702ea29cdfbbe41a2d4d0b6956117ebad', chain: 'osmosis-1', country: 'India', isp: 'LeaseWeb Netherlands B.V.', as: 'AS24673 Hetzner Online GmbH' },
-      { moniker: '00150', nodeId: '5895e0a5f496edd17d160c9be6619c3f5cc6e095', chain: 'osmosis-1', country: 'UK', isp: 'Hetzner', as: 'AS200295 Skoed Limited' },
-      { moniker: '00rx6', nodeId: '54055b9619090603a218e352bb83cc4a1d764005', chain: 'osmosis-1', country: 'Canada', isp: 'Amazon.com, Inc.', as: 'AS60781 LeaseWeb Netherlands B.V.' }
-    ];
-    
-    // this.initNetworks();
-    // this.initChart();
-    // for (const [key, value] of Object.entries(networks)) {
-    //   ns.append(`<option value=${key}>${key}</option>`);
-    // }
-    // console.log(Object.keys(await this.appService.listNetworks()));
-    // this.options = {
-    //   layers:[tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //     opacity: 0.7,
-    //     maxZoom: 19,
-    //     detectRetina: true,
-    //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    //   })],
-    //   zoom:1,
-    //   center:latLng(0,0)
-    // }
   }
 
   initMap(): void {
@@ -109,16 +84,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   initChart():void {
 
-    // this.pieChartLabels = ['January', 'February', 'March'];
-    // this.pieChartLabels = this.tableData.slice(0,6).map(item => item['country']);
-    // this.pieChartData = [50445, 33655, 15900];
-    // this.pieChartData = this.tableData.slice(0,6).map(item => item['nodes']);
     this.pieChartType = 'pie';
     this.pieChartLegend = true;
     this.pieChartPlugins = [pluginLabels];
-    // this.chartColors = [
-    //   { backgroundColor: this.appService.getRandomColors(this.tableData.slice(0,6).length) }
-    // ];
+
     this.pieChartOptions = {
       rotation: 0.5 * Math.PI - (70 / 180) * Math.PI,
       responsive: true,
@@ -177,66 +146,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     }
     this.selectedNetwork = this.networks['names'][0];
-
-    // console.log(this.networks.data);
-    // for (const [key, obj] of Object.entries(this.networks['names'])) {
-    //   L.markerClusterGroup({ removeOutsideVisibleBounds: true });
-      
-    //   const value = obj['value'];
-    //   if (value !== 'all') {
-        
-    //     // console.log(this.networks.data[value]);
-    //     this.networks.data[value].forEach(function (item) {
-          
-    //       let markerIcon = L.icon({
-    //         iconUrl: 'assets/markers/core-1.png'
-    //       });
-    //       L.marker([item.lat, item.lon], {
-    //         icon: markerIcon,
-    //       }).addTo(this.map);
-
-    //       // const markerIcon = L.icon({
-    //       //   iconUrl: 'assets/markers/core-1.png'
-    //       // });
-    //       // console.log(item);
-    //       // const coordinates = L.latLng([item.lat, item.lon]);
-    //       // const lastLayer = marker(coordinates).setIcon(markerIcon);
-    //       // this.markerClusterGroup.addLayer(lastLayer);
-    //       // L.marker(coordinates, {
-    //       //   icon: markerIcon
-    //       // }).addTo(this.map);
-    //       // markerClusterGroups[key].addLayer(
-    //         // L.marker([location.lat, location.lon], {
-    //         //   icon: L.icon({
-    //         //     iconUrl: "images/markers/" + key + ".png",
-    //         //   }),
-    //         //   properties: location,
-    //         //   belongs_to: key,
-    //         // })
-    //       // );
-    //     });
-    //   }
-    // }
-
-
-    // let markerIcon = L.icon({
-    //   iconUrl: 'assets/markers/core-1.png'
-    // });
-    // L.marker([48.208, 16.373], {
-    //       icon: markerIcon,
-    // }).addTo(this.map);
   }
   
   async ngAfterViewInit() {
     await this.initMap();
     await this.initNetworks();
-    await this.updateTable();
+    await this.updateData();
     await this.initChart();
   }
 
-  updateTable(): void {
+  updateData(): void {
 
     let allNetworks = [];
+
+    
+    this.markers.forEach(item => {
+      item.removeFrom(this.map);
+    });
+
     if(this.selectedNetwork.value === 'all') {
       for (let name in this.networks.data) {
         this.networks.data[name] = this.networks.data[name].map(v => ({...v, chain: name}));
@@ -271,6 +198,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartColors = [
       { backgroundColor: this.appService.getRandomColors(slicedData.length+1) }
     ];
+
+
+    allNetworks.forEach(item => {
+      const markericon = L.icon({
+        iconUrl: `assets/markers/${item.chain}.png`
+      });
+      this.markers.push(L.marker([item.lat, item.lon], {
+        icon: markericon
+      }).addTo(this.map).bindPopup(`
+        <p><b>Moniker: </b>${item.moniker}</p>
+        <p><b>NodeId: </b>${item.nodeId}</p>
+        <p><b>Chain: </b>${item.chain}</p>
+        <p><b>Country: </b>${item.country}</p>
+        <p><b>ISP: </b>${item.isp}</p>
+        <p><b>Data Center: </b>${item.as}</p>
+      `));
+    });
+
+    this.loadingMap = false;
   }
 
   openModal() {
