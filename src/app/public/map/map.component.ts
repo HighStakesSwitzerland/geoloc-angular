@@ -1,19 +1,18 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import * as L from 'leaflet';
-import { AppService } from './services/app.service';
 import { ChartType, ChartOptions } from 'chart.js';
 import { SingleDataSet, Label } from 'ng2-charts';
 import * as pluginLabels from 'chartjs-plugin-piechart-outlabels';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-
+import { AppService } from 'src/app/services/app.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  providers: [DialogService]
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.scss']
 })
-export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+
   markers: Array<any> = [];
   networks: any = {};
   totalNodes: Number = 0;
@@ -27,7 +26,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   hideSidebar: boolean = false;
   showDiaglog: boolean = false;
   map;
-  ref: DynamicDialogRef;
   pieChartOptions: ChartOptions;
   pieChartLabels: Label[];
   pieChartData: SingleDataSet;
@@ -38,9 +36,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private appService: AppService,
-    private dialogService: DialogService
-  ) {
-  }
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   async ngOnInit() {
 
@@ -59,7 +57,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       { field: 'isp', header: 'ISP' },
       { field: 'as', header: 'Data Center' }
     ];
-
   }
 
   initMap(): void {
@@ -98,11 +95,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       plugins: {
         devicePixelRatio: -1,
-        // offset: false,
         outlabels: {
           display: true,
           text: '%l %p',
-          // text: '%l\n%p',
           color: 'black',
           padding: 4,
           borderRadius: 4,
@@ -119,16 +114,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async initNetworks() {
 
-    const networkIcons = [
-      { name: 'osmosis', icon: 'osmo.svg' },
-      { name: 'desmos', icon: 'dsm.svg' },
-      { name: 'sifchain', icon: 'sifchain.svg' },
-      { name: 'pio-mainnet', icon: 'pio-mainnet.png' }
-    ];
+    const networkIcons = this.appService.mapNetworkIcons;
 
+    const { network } = this.activatedRoute.snapshot.params;
+    
     this.networks['names'] = [{ name: 'All Networks', value: 'all', icon: '' }];
     this.networks['data'] = await this.appService.listNetworks();
-    
+
     for (const key of Object.keys(this.networks['data'])) {
       const item = networkIcons.find(item => key.search(item.name)> -1);
 
@@ -138,14 +130,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         icon: (item) ? item['icon'] : false
       })
     }
+
     this.selectedNetwork = this.networks['names'][0];
+    if (network) {
+      if (!Object.keys(this.networks['data']).includes(network)) {
+        this.router.navigate(['/']);
+      }
+      else {
+        this.selectedNetwork = this.networks['names'].find(item => item.name === network);
+      }
+    }
   }
   
   async ngAfterViewInit() {
-    await this.initMap();
-    await this.initNetworks();
-    await this.updateData();
-    await this.initChart();
+    setTimeout(async () => {
+      await this.initMap();
+      await this.initNetworks();
+      await this.updateData();
+      await this.initChart();
+    });
   }
 
   updateData(): void {
@@ -210,12 +213,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.loadingMap = false;
+
+    if (this.selectedNetwork.value === 'all') {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate([this.selectedNetwork.name]);
+    }
   }
 
-  ngOnDestroy() {
-    if (this.ref) {
-      this.ref.close();
-    }
+  ngOnDestroy(): void {
+    this.map.off();
+    this.map.remove();
+    this.map = undefined;
   }
 
 }

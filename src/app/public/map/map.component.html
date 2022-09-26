@@ -1,0 +1,110 @@
+<div id="sidebar" [ngClass]="{ 'sidebar-collapse': hideSidebar }">
+  <div class="heading">
+    <div class="header-logo">
+      <img *ngIf="selectedNetwork?.icon" [src]="'assets/images/' + selectedNetwork?.icon">
+      <p class="main-heading">{{ selectedNetwork?.name }}</p>
+    </div>
+    <button pButton type="button" icon="pi pi-angle-left" class="btn-sidebar" (click)="hideSidebar = !hideSidebar"></button>
+  </div>
+
+  <div class="body">
+    <p class="stat-text">STATS FOR THE WHOLE WORLD:</p>
+    <p class="total-nodes">NUMBER OF NODES: {{ totalNodes }}</p>
+
+    <p-dropdown class="countries-dropdown" [options]="countries" [(ngModel)]="selectedCountry" (onChange)="updateData()" optionLabel="name"></p-dropdown>
+
+    <p-table [value]="tableData" [paginator]="true" [rows]="5" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="country">{{ selectedCountry.name }} <p-sortIcon field="country"></p-sortIcon></th>
+                <th pSortableColumn="nodes">Nodes <p-sortIcon field="nodes"></p-sortIcon></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+            <tr>
+                <td>{{data.country}}</td>
+                <td>{{data.nodes}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p id="pieChart-title">Concentration Chart</p>
+    <div style="width: 100%; margin:auto;">
+      <canvas
+      *ngIf="pieChartData"
+      id="pieChart"
+      baseChart
+      [data]="pieChartData"
+      [labels]="pieChartLabels"
+      [chartType]="pieChartType"
+      [options]="pieChartOptions"
+      [plugins]="pieChartPlugins"
+      [colors]="chartColors"></canvas>
+    </div>
+
+    <p-button class="btn-more-details" (click)="showDiaglog=true;" label="More Details" icon="pi pi-info-circle"></p-button>
+  </div>
+</div>
+<div id="map">
+  <p-button class="btn-sidebar-mobile" icon="pi pi-angle-right" [ngClass]="{ 'hide-button': !hideSidebar }" (click)="hideSidebar = !hideSidebar"></p-button>
+  <i *ngIf="loadingMap" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+  <p-dropdown class="networks-dropdown" [options]="networks?.names" (onChange)="updateData()" [(ngModel)]="selectedNetwork" optionLabel="name">
+    <ng-template pTemplate="selectedItem">
+      <div class="network-item network-item-value"  *ngIf="selectedNetwork">
+          <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon">
+          <div>{{selectedNetwork.name}}</div>
+      </div>
+    </ng-template>
+    <ng-template let-network pTemplate="item">
+      <div class="network-item">
+          <img *ngIf="network.icon" [src]="'assets/images/' + network.icon" class="pi pi-angle-right">
+          <div>{{network.name}}</div>
+      </div>
+  </ng-template>
+  </p-dropdown>
+  <p-button class="btn-dashboard" label="DASHBOARD" routerLink="/dashboard"></p-button>
+</div>
+
+
+<p-dialog styleClass="dialog-more-details" [(visible)]="showDiaglog" [style]="{width: '50vw'}" [baseZIndex]="10000">
+  <ng-template pTemplate="header">
+    <div class="header-logo">
+      <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon">
+      <div>{{ selectedNetwork?.name }}</div>
+    </div>
+</ng-template>
+  
+  <p class="stat-text">STATS FOR THE WHOLE WORLD:</p>
+  <p class="total-nodes">NUMBER OF NODES: {{ totalNodes }}</p>
+
+  <p-table class="dialog-table" #dt [columns]="cols" [value]="dialogTableData" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+    [filterDelay]="0" [globalFilterFields]="['moniker','nodeId','chain','country', 'isp', 'as']">
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+          <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+          </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th [pSortableColumn]="col.field" *ngFor="let col of columns">
+            {{col.header}} <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+          <td [attr.colspan]="cols.length" style="text-align: center;padding-block: 16px;">No matching records found</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

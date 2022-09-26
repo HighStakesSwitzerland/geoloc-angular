@@ -1,0 +1,87 @@
+<div class="dashboard-wrapper">
+  <div class="wrapper-status">
+    <div class="container-map-button">
+      <p-dropdown class="networks-dropdown" [options]="networks" (onChange)="updateData()" [(ngModel)]="selectedNetwork" optionLabel="name">
+        <ng-template pTemplate="selectedItem">
+          <div class="network-item network-item-value"  *ngIf="selectedNetwork">
+              <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon">
+              <div>{{selectedNetwork.name}}</div>
+          </div>
+        </ng-template>
+        <ng-template let-network pTemplate="item">
+          <div class="network-item">
+              <img *ngIf="network.icon" [src]="'assets/images/' + network.icon" class="pi pi-angle-right">
+              <div>{{network.name}}</div>
+          </div>
+      </ng-template>
+      </p-dropdown>
+      <p-button class="btn-dashboard" label="NETWORK MAP" routerLink="/"></p-button>
+    </div>
+    <div class="container-status">
+      <div class="network-info">
+        <span class="network-heading">{{ selectedNetwork?.name }}</span>
+        <div class="tags">
+          <span class="tag-success">
+            <span class="bullet"></span>
+            <span class="text">{{ active }} Active</span>
+          </span>
+          <span class="tag-warning">
+            <span class="bullet"></span>
+            <span class="text">{{ inActive }} Inactive</span>
+          </span>
+          <span class="tag-danger">
+            <span class="bullet"></span>
+            <span class="text">{{ jailed }} Jailed</span>
+          </span>
+        </div>
+      </div>
+      <div class="network-detail">
+        <div class="last-updated">
+          <p class="text">Last update</p>
+          <p class="seconds">{{ lastUpdated }}s ago</p>
+        </div>
+        <div class="networks">
+          <p class="text">Total Peers</p>
+          <p class="count">{{ totalPeers }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrapper-table">
+    <div class="container-table">
+      <p class="table-heading">Node List</p>
+      <div class="table-header">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+        </span>
+      </div>
+
+      <p-table class="dialog-table" #dt [loading]="loadingTable" [columns]="cols" [value]="tableData" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        [filterDelay]="0" [globalFilterFields]="['moniker','nodeId','chain','country', 'isp', 'as']">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th [pSortableColumn]="col.field" *ngFor="let col of columns">
+                {{col.header}} <p-sortIcon [field]="col.field"></p-sortIcon>
+              </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+              </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+              <td *ngIf="!loadingTable" [attr.colspan]="cols.length" style="text-align: center;padding-block: 16px;">No matching records found</td>
+              <!-- <td *ngIf="loadingTable" [attr.colspan]="cols.length" style="text-align: center;padding-block: 16px;">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+              </td> -->
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
