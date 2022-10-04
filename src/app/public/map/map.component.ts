@@ -117,11 +117,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     const networkIcons = this.appService.mapNetworkIcons;
 
     const { network } = this.activatedRoute.snapshot.params;
-    
+
     this.networks['names'] = [{ name: 'All Networks', value: 'all', icon: '' }];
     this.networks['data'] = await this.appService.listNetworks();
 
     for (const key of Object.keys(this.networks['data'])) {
+      console.log(key)
       const item = networkIcons.find(item => key.search(item.name)> -1);
 
       this.networks['names'].push({
@@ -141,7 +142,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
-  
+
   async ngAfterViewInit() {
     setTimeout(async () => {
       await this.initMap();
@@ -155,7 +156,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let allNetworks = [];
 
-    
+
     this.markers.forEach(item => {
       item.removeFrom(this.map);
     });
