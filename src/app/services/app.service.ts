@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {NavigationEnd, Router} from "@angular/router";
+import {filter} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -7,16 +9,24 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class AppService {
 
   mapNetworkIcons = [
-    { name: 'osmosis', icon: 'osmosis.svg' },
-    { name: 'desmos', icon: 'desmos.svg' },
-    { name: 'sifchain', icon: 'sifchain.svg' },
-    { name: 'pio-mainnet', icon: 'provenance.png' },
-    { name: 'injective', icon: 'injective.png' }
+    {name: 'osmosis', icon: 'osmosis.svg'},
+    {name: 'desmos', icon: 'desmos.svg'},
+    {name: 'sifchain', icon: 'sifchain.svg'},
+    {name: 'pio-mainnet', icon: 'provenance.png'},
+    {name: 'injective', icon: 'injective.png'}
   ];
 
-  constructor(
-    private http: HttpClient
-  ) {}
+  private _currentNetwork: string | undefined;
+  private _previousNetwork: string | undefined;
+
+  constructor(private http: HttpClient, private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this._previousNetwork = this._currentNetwork;
+        this._currentNetwork = event.url.substring(event.url.lastIndexOf('/') + 1);
+      });
+  }
 
   listNetworks(): Promise<any> {
     return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
@@ -24,7 +34,7 @@ export class AppService {
 
   async listChains(chains): Promise<any> {
     const httpCalls = [];
-    for(let i = 0 ; i < chains.length ; i++) {
+    for (let i = 0; i < chains.length; i++) {
       httpCalls.push(
         this.http.get(`https://validators.cosmos.directory/chains/${chains[i]}`).toPromise()
       );
@@ -38,10 +48,10 @@ export class AppService {
   }
 
   getRandomColors(count): Array<string> {
-    
+
     const colors = [];
-    for (let i=1 ; i<=count ; i++) {
-      
+    for (let i = 1; i <= count; i++) {
+
       let color = "#";
       for (let i = 0; i < 3; i++)
         color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2);
@@ -50,12 +60,21 @@ export class AppService {
     return colors;
   }
 
-  groupBy (arr: Array<any>, key: string): any {
+  groupBy(arr: Array<any>, key: string): any {
     return arr.reduce((group, obj) => {
       const field = obj[key];
       group[field] = group[field] ?? [];
       group[field].push(obj);
       return group;
     }, {});
+  }
+
+
+  get currentNetwork(): string | undefined {
+    return this._currentNetwork;
+  }
+
+  get previousNetwork(): string | undefined {
+    return this._previousNetwork;
   }
 }

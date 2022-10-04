@@ -15,7 +15,7 @@
           </div>
       </ng-template>
       </p-dropdown>
-      <p-button class="btn-dashboard" label="NETWORK MAP" routerLink="/"></p-button>
+      <p-button class="btn-dashboard" label="NETWORK MAP" [routerLink]="['/', appService.currentNetwork]"></p-button>
     </div>
     <div class="container-status">
       <div class="network-info">

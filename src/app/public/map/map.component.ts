@@ -35,7 +35,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   chartColors: Array<any>;
 
   constructor(
-    private appService: AppService,
+    public appService: AppService,
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }

@@ -62,7 +62,7 @@
       </div>
   </ng-template>
   </p-dropdown>
-  <p-button class="btn-dashboard" label="DASHBOARD" routerLink="/dashboard"></p-button>
+  <p-button class="btn-dashboard" label="DASHBOARD" [routerLink]="['/dashboard', appService.currentNetwork]"></p-button>
 </div>
 
 
@@ -73,7 +73,7 @@
       <div>{{ selectedNetwork?.name }}</div>
     </div>
 </ng-template>
-  
+
   <p class="stat-text">STATS FOR THE WHOLE WORLD:</p>
   <p class="total-nodes">NUMBER OF NODES: {{ totalNodes }}</p>
 

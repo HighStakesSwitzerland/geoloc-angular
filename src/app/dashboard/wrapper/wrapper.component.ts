@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
@@ -21,10 +21,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
   lastUpdated = 0;
   totalPeers:Number = 0;
   cols: any[];
-  constructor(
-    private appService: AppService,
-    private router: Router
-  ) {}
+  constructor(public appService: AppService, private router: Router) {}
 
   async ngOnInit() {
 
