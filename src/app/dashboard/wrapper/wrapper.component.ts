@@ -78,11 +78,12 @@ export class WrapperComponent implements OnInit, OnDestroy {
     this.selectedNetwork = this.networks[0];
 
     if (network) {
-      if (!Object.keys(this.networksData).includes(network)) {
+      const found = this.networks.find(item => item.name.includes(network))
+      if (found === undefined) {
         this.router.navigate(['/dashboard']);
       }
       else {
-        this.selectedNetwork = this.networks.find(item => item.name === network);
+        this.selectedNetwork = found;
       }
     }
 
@@ -110,17 +111,17 @@ export class WrapperComponent implements OnInit, OnDestroy {
 
     this.tableData = allNetworks;
 
-    
+
     if (this.selectedNetwork.value === 'all') {
       this.router.navigate(['/dashboard']);
     } else {
-      this.router.navigate([`/dashboard/${this.selectedNetwork.name}`]);
+      const routePrettyName = this.selectedNetwork.name.substring(0, this.selectedNetwork.name.lastIndexOf('-'));
+      this.router.navigate([`/dashboard/${routePrettyName}`]);
     }
-    
+
     const validators = await this.appService.listChains(chains);
     this.totalPeers = validators.length;
-    console.log(validators);
-    
+
     const { BOND_STATUS_BONDED, BOND_STATUS_UNBONDED } = this.appService.groupBy(validators, 'status');
 
     this.active = (BOND_STATUS_BONDED)? BOND_STATUS_BONDED.length : 0;

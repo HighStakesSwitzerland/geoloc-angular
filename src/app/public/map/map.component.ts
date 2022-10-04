@@ -122,7 +122,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.networks['data'] = await this.appService.listNetworks();
 
     for (const key of Object.keys(this.networks['data'])) {
-      console.log(key)
       const item = networkIcons.find(item => key.search(item.name)> -1);
 
       this.networks['names'].push({
@@ -134,11 +133,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.selectedNetwork = this.networks['names'][0];
     if (network) {
-      if (!Object.keys(this.networks['data']).includes(network)) {
+      if (!Object.keys(this.networks['data']).find((key) => key.includes(network))) {
         this.router.navigate(['/']);
       }
       else {
-        this.selectedNetwork = this.networks['names'].find(item => item.name === network);
+        this.selectedNetwork = this.networks['names'].find(item => item.name.includes(network));
       }
     }
   }
@@ -218,7 +217,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.selectedNetwork.value === 'all') {
       this.router.navigate(['/']);
     } else {
-      this.router.navigate([this.selectedNetwork.name]);
+      const routePrettyName = this.selectedNetwork.name.substring(0, this.selectedNetwork.name.lastIndexOf('-'));
+      this.router.navigate([routePrettyName]);
     }
   }
 
