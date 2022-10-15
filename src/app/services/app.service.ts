@@ -9,6 +9,7 @@ import {filter} from "rxjs/operators";
 export class AppService {
 
   mapNetworkIcons = [
+    {name: 'columbus', icon: 'terra-classic.svg'},
     {name: 'osmosis', icon: 'osmosis.svg'},
     {name: 'desmos', icon: 'desmos.svg'},
     {name: 'sifchain', icon: 'sifchain.svg'},
