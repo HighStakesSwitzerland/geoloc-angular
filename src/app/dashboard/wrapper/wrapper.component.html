@@ -4,13 +4,13 @@
       <p-dropdown class="networks-dropdown" [options]="networks" (onChange)="updateData()" [(ngModel)]="selectedNetwork" optionLabel="name">
         <ng-template pTemplate="selectedItem">
           <div class="network-item network-item-value"  *ngIf="selectedNetwork">
-              <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon">
+              <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon.icon">
               <div>{{selectedNetwork.name}}</div>
           </div>
         </ng-template>
         <ng-template let-network pTemplate="item">
           <div class="network-item">
-              <img *ngIf="network.icon" [src]="'assets/images/' + network.icon" class="pi pi-angle-right">
+              <img *ngIf="network.icon" [src]="'assets/images/' + network.icon.icon" class="pi pi-angle-right">
               <div>{{network.name}}</div>
           </div>
       </ng-template>
@@ -42,14 +42,14 @@
         </div>
         <div class="networks">
           <p class="text">Total Validators</p>
-          <p class="count">{{ totalPeers }}</p>
+          <p class="count">{{ totalValidators }}</p>
         </div>
       </div>
     </div>
   </div>
   <div class="wrapper-table">
     <div class="container-table">
-      <p class="table-heading">Node Full List</p>
+      <p class="table-heading">{{ tableData.length }} Detected Nodes <i class="pi pi-info-circle" pTooltip="As we continuously crawl all networks, more nodes may appear later"></i></p>
       <div class="table-header">
         <span class="p-input-icon-left">
             <i class="pi pi-search"></i>

@@ -19,7 +19,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
   jailed: Number = 0;
   timerRef;
   lastUpdated = 0;
-  totalPeers: Number = 0;
+  totalValidators: Number = 0;
   cols: any[];
 
   constructor(public appService: AppService, private router: Router) {
@@ -59,7 +59,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
       this.networks.push({
         name: key,
         value: key,
-        icon: (item) ? item['icon'] : ""
+        icon: item
       })
     }
 
@@ -87,13 +87,13 @@ export class WrapperComponent implements OnInit, OnDestroy {
         this.networksData[name] = this.networksData[name].map(v => ({...v, chain: name}));
         allNetworks = allNetworks.concat(this.networksData[name]);
       }
-      chains = this.networks.map(item => item.icon.split('.')[0]);
+      chains = this.networks.map(item => item.icon.chainUrl);
       chains.shift();
     } else {
 
       allNetworks = allNetworks.concat(this.networksData[this.selectedNetwork.value]);
       allNetworks = allNetworks.map(v => ({...v, chain: this.selectedNetwork.value}));
-      chains = [this.selectedNetwork.icon.split('.')[0]];
+      chains = [this.selectedNetwork.icon.chainUrl];
     }
 
     this.tableData = allNetworks;
@@ -107,7 +107,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     }
 
     const validators = await this.appService.listChains(chains);
-    this.totalPeers = validators.length;
+    this.totalValidators = validators.length;
 
     const {BOND_STATUS_BONDED, BOND_STATUS_UNBONDED} = this.appService.groupBy(validators, 'status');
 

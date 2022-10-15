@@ -9,12 +9,12 @@ import {filter} from "rxjs/operators";
 export class AppService {
 
   mapNetworkIcons = [
-    {name: 'columbus', icon: 'terra-classic.svg'},
-    {name: 'osmosis', icon: 'osmosis.svg'},
-    {name: 'desmos', icon: 'desmos.svg'},
-    {name: 'sifchain', icon: 'sifchain.svg'},
-    {name: 'pio-mainnet', icon: 'provenance.png'},
-    {name: 'injective', icon: 'injective.png'}
+    {name: 'columbus', icon: 'terra-classic.svg', chainUrl: 'terra'},
+    {name: 'osmosis', icon: 'osmosis.svg', chainUrl: 'osmosis'},
+    {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos'},
+    {name: 'sifchain', icon: 'sifchain.svg', chainUrl: 'sifchain'},
+    {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance'},
+    {name: 'injective', icon: 'injective.png', chainUrl: 'injective'}
   ];
 
   private _currentNetwork: string | undefined;
