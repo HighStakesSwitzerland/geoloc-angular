@@ -155,7 +155,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let allNetworks = [];
 
-
+    console.log("removing markers");
     this.markers.forEach(item => {
       item.removeFrom(this.map);
     });
@@ -195,22 +195,29 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       { backgroundColor: this.appService.getRandomColors(slicedData.length+1) }
     ];
 
-
+    const markers = new L.MarkerClusterGroup();
     allNetworks.forEach(item => {
       const markericon = L.icon({
         iconUrl: `assets/markers/${item.chain}.png`
       });
-      this.markers.push(L.marker([item.lat, item.lon], {
+      const marker = L.marker([item.lat, item.lon], {
         icon: markericon
-      }).addTo(this.map).bindPopup(`
+      });
+      marker.bindPopup(`
         <p><b>Moniker: </b>${item.moniker}</p>
         <p><b>NodeId: </b>${item.nodeId}</p>
         <p><b>Chain: </b>${item.chain}</p>
         <p><b>Country: </b>${item.country}</p>
         <p><b>ISP: </b>${item.isp}</p>
         <p><b>Data Center: </b>${item.as}</p>
-      `));
+      `);
+
+      markers.addLayer(marker);
+      this.markers.push(marker);
     });
+
+    console.log("adding markers");
+    this.map.addLayer(markers);
 
     this.loadingMap = false;
 
