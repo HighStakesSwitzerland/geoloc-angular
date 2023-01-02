@@ -152,13 +152,26 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateData(): void {
+ 
+   //this.map.setView([ 51.2, 7 ],4);
+  
+   this.ngOnDestroy();
+   this.initMap();
+
+   //this.map.eachLayer(function (layer) {
+    //      console.log(layer['_latlng']);
+//	if(layer['_latlng']!=undefined)
+   //      layer.remove();
+  // });
 
     let allNetworks = [];
 
-    console.log("removing markers");
-    this.markers.forEach(item => {
-      item.removeFrom(this.map);
-    });
+   //this.map.removeLayer(this.markers);
+
+    //console.log("removing markers");
+    //this.markers.forEach(item => {
+     // item.removeFrom(this.map);
+   // });
 
     if(this.selectedNetwork.value === 'all') {
       for (let name in this.networks.data) {
@@ -211,12 +224,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         <p><b>ISP: </b>${item.isp}</p>
         <p><b>Data Center: </b>${item.as}</p>
       `);
+      
+	    markers.addLayer(marker);
+            this.markers.push(marker);
+});
 
-      markers.addLayer(marker);
-      this.markers.push(marker);
-    });
-
-    console.log("adding markers");
+    //console.log(this.selectedNetwork);
+    //console.log("adding markers");
     this.map.addLayer(markers);
 
     this.loadingMap = false;

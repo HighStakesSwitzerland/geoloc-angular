@@ -14,7 +14,12 @@ export class AppService {
     {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos'},
     {name: 'sifchain', icon: 'sifchain.svg', chainUrl: 'sifchain'},
     {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance'},
-    {name: 'injective', icon: 'injective.png', chainUrl: 'injective'}
+    {name: 'injective', icon: 'injective.png', chainUrl: 'injective'},
+    {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet'},
+    {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmos'},
+    {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub'},
+    {name: 'core', icon: 'persistence.png', chainUrl: 'persistence'}
+
   ];
 
   private _currentNetwork: string | undefined;
