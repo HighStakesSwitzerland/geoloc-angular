@@ -13,8 +13,9 @@ $theme_color: #2d2755;
 
 p-dropdown.networks-dropdown {
   ::ng-deep {
-    
+
     .p-dropdown {
+      height: 40px;
       position: absolute;
       top: 20px;
       left: calc(50% - 50px);
@@ -205,7 +206,7 @@ p-table {
       td, th, .p-paginator-element, .p-paginator-icon {
         font-size: 14px;
       }
-      
+
       td, .p-paginator-element, .p-paginator-icon {
         color: white !important;
       }
@@ -231,7 +232,7 @@ p-table {
       .p-paginator-current {
         font-size: 14px;
       }
-      
+
       span.p-paginator-current {
         position: absolute;
         bottom: 0;
@@ -269,7 +270,7 @@ p-table {
 
 
 @media only screen and (max-width: 767px) {
-  
+
   #sidebar {
     width: 97%;
     max-width: 97%;
@@ -299,13 +300,13 @@ p-table {
 
 p-dialog {
   ::ng-deep {
-    
+
     .dialog-more-details {
       .p-dialog-header,
       .p-dialog-content {
         background: #28034b !important;
       }
-    
+
       .p-dialog-header {
         color: white;
         font-weight: unset !important;

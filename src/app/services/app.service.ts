@@ -16,7 +16,7 @@ export class AppService {
     {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance'},
     {name: 'injective', icon: 'injective.png', chainUrl: 'injective'},
     {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet'},
-    {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmos'},
+    {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmoshub'},
     {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub'},
     {name: 'core', icon: 'persistence.png', chainUrl: 'persistence'}
 
@@ -31,6 +31,8 @@ export class AppService {
       .subscribe((event: any) => {
         this._previousNetwork = this._currentNetwork;
         this._currentNetwork = event.url.substring(event.url.lastIndexOf('/') + 1);
+        // remove 'dashboard' as it's not a valid network name and breaks page switch from dashboard to map
+        this._currentNetwork = "dashboard" == this._currentNetwork ? "" : this._currentNetwork;
       });
   }
 

@@ -9,6 +9,7 @@ p-dropdown.networks-dropdown {
   ::ng-deep {
     .p-dropdown {
       width: 250px;
+      height: 40px;
       margin-right: 1rem;
       background-color: #251853;
       box-shadow: none;
@@ -70,7 +71,7 @@ p-dropdown.networks-dropdown {
   display: flex;
   align-items: center;
   flex-direction: row;
-  
+
   @media (max-width: 600px) {
     align-items: flex-start;
     flex-direction: column;
@@ -156,7 +157,7 @@ p-dropdown.networks-dropdown {
     margin-right: 80px;
     flex-direction: column;
   }
-  
+
   .last-updated .text,
   .networks .text {
     color: #6c7284;
@@ -228,7 +229,7 @@ p-table {
       td, th, .p-paginator-element, .p-paginator-icon {
         font-size: 14px;
       }
-      
+
       td, .p-paginator-element, .p-paginator-icon {
         color: white !important;
       }
@@ -257,7 +258,7 @@ p-table {
       .p-paginator-current {
         font-size: 14px;
       }
-      
+
       span.p-paginator-current {
         position: absolute;
         bottom: 0;

@@ -48,7 +48,8 @@
 <div id="map">
   <p-button class="btn-sidebar-mobile" icon="pi pi-angle-right" [ngClass]="{ 'hide-button': !hideSidebar }" (click)="hideSidebar = !hideSidebar"></p-button>
   <i *ngIf="loadingMap" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-  <p-dropdown class="networks-dropdown" [options]="networks?.names" (onChange)="updateData()" [(ngModel)]="selectedNetwork" optionLabel="name">
+  <p-dropdown class="networks-dropdown" [panelStyle]="{ 'min-width': 'min(100vw, 250px)' }" appendTo="body"
+              [virtualScroll]="true" [options]="networks?.names" (onChange)="updateData()" [(ngModel)]="selectedNetwork" optionLabel="name">
     <ng-template pTemplate="selectedItem">
       <div class="network-item network-item-value"  *ngIf="selectedNetwork">
           <img *ngIf="selectedNetwork.icon" [src]="'assets/images/' + selectedNetwork.icon">
