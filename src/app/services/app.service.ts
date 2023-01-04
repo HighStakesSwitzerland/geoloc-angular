@@ -9,6 +9,11 @@ import {filter} from "rxjs/operators";
 export class AppService {
 
   mapNetworkIcons = [
+    /**
+     * name is the pretty name of the chain used in urls
+     * chainUrl is the url path to append to https://validators.cosmos.directory/chains/{chainUrl} to retrieve chain details
+     * => make sure it's the correct url
+     */
     {name: 'columbus', icon: 'terra-classic.svg', chainUrl: 'terra'},
     {name: 'osmosis', icon: 'osmosis.svg', chainUrl: 'osmosis'},
     {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos'},
