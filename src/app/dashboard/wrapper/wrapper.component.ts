@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {AppService} from 'src/app/services/app.service';
+import {AppService, ChainsNodeList, NodeDetail} from 'src/app/services/app.service';
 
 @Component({
   selector: 'dashboard-wrapper',
@@ -10,7 +10,7 @@ import {AppService} from 'src/app/services/app.service';
 export class WrapperComponent implements OnInit, OnDestroy {
 
   loadingTable: boolean = true;
-  networksData: any;
+  networksData: ChainsNodeList;
   networks = [];
   selectedNetwork: any;
   tableData = [];
@@ -29,11 +29,12 @@ export class WrapperComponent implements OnInit, OnDestroy {
 
     this.cols = [
       {field: 'moniker', header: 'Moniker'},
-      {field: 'nodeId', header: 'Node Id'},
+      {field: 'node_id', header: 'Node Id'},
       {field: 'chain', header: 'Chain'},
       {field: 'country', header: 'Country'},
       {field: 'isp', header: 'ISP'},
-      {field: 'as', header: 'Data Center'}
+      {field: 'as', header: 'Data Center'},
+      {field: 'last_seen', header: 'Last Seen'}
     ];
 
     await this.initNetworks();
@@ -79,19 +80,18 @@ export class WrapperComponent implements OnInit, OnDestroy {
   async updateData() {
 
     this.loadingTable = true;
-    let allNetworks = [];
+    let allNetworks: Array<NodeDetail> = [];
     let chains = [];
 
     if (this.selectedNetwork.value === 'all') {
       for (let name in this.networksData) {
-        this.networksData[name] = this.networksData[name].map(v => ({...v, chain: name}));
-        allNetworks = allNetworks.concat(this.networksData[name]);
+        this.networksData[name].nodes = this.networksData[name].nodes.map(v => ({...v, chain: name}));
+        allNetworks = allNetworks.concat(this.networksData[name].nodes);
       }
       chains = this.networks.map(item => item.icon.chainUrl);
       chains.shift();
     } else {
-
-      allNetworks = allNetworks.concat(this.networksData[this.selectedNetwork.value]);
+      allNetworks = allNetworks.concat(this.networksData[this.selectedNetwork.value].nodes);
       allNetworks = allNetworks.map(v => ({...v, chain: this.selectedNetwork.value}));
       chains = [this.selectedNetwork.icon.chainUrl];
     }

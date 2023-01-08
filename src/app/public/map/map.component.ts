@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
-import { ChartType, ChartOptions } from 'chart.js';
-import { SingleDataSet, Label } from 'ng2-charts';
+import {ChartOptions, ChartType} from 'chart.js';
+import {Label, SingleDataSet} from 'ng2-charts';
 import * as pluginLabels from 'chartjs-plugin-piechart-outlabels';
-import { AppService } from 'src/app/services/app.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import {AppService, ChainsNodeList, NodeDetail} from 'src/app/services/app.service';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   markers: Array<any> = [];
-  networks: any = {};
+  networks: Networks = {} as Networks;
   totalNodes: Number = 0;
   selectedNetwork: any;
   countries = [];
@@ -38,30 +38,31 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     public appService: AppService,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) { }
+  ) {
+  }
 
   async ngOnInit() {
 
     this.countries = [
-      { name: 'COUNTRY', groupBy: 'country' },
-      { name: 'ISP', groupBy: 'isp' },
-      { name: 'DATA_CENTER', groupBy: 'as' }
+      {name: 'COUNTRY', groupBy: 'country'},
+      {name: 'ISP', groupBy: 'isp'},
+      {name: 'DATA_CENTER', groupBy: 'as'}
     ];
     this.selectedCountry = this.countries[0];
 
     this.cols = [
-      { field: 'moniker', header: 'Moniker' },
-      { field: 'nodeId', header: 'Node Id' },
-      { field: 'chain', header: 'Chain' },
-      { field: 'country', header: 'Country' },
-      { field: 'isp', header: 'ISP' },
-      { field: 'as', header: 'Data Center' }
+      {field: 'moniker', header: 'Moniker'},
+      {field: 'nodeId', header: 'Node Id'},
+      {field: 'chain', header: 'Chain'},
+      {field: 'country', header: 'Country'},
+      {field: 'isp', header: 'ISP'},
+      {field: 'as', header: 'Data Center'}
     ];
   }
 
   initMap(): void {
     this.map = L.map('map', {
-      center: [ 51.2, 7 ],
+      center: [51.2, 7],
       zoom: 4
     });
 
@@ -72,7 +73,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     tiles.addTo(this.map);
   }
 
-  initChart():void {
+  initChart(): void {
 
     this.pieChartType = 'pie';
     this.pieChartLegend = true;
@@ -116,28 +117,27 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const networkIcons = this.appService.mapNetworkIcons;
 
-    const { network } = this.activatedRoute.snapshot.params;
+    const {network} = this.activatedRoute.snapshot.params;
 
-    this.networks['names'] = [{ name: 'All Networks', value: 'all', icon: '' }];
-    this.networks['data'] = await this.appService.listNetworks();
+    this.networks.names = [{name: 'All Networks', value: 'all', icon: ''}];
+    this.networks.data = await this.appService.listNetworks();
 
-    for (const key of Object.keys(this.networks['data'])) {
-      const item = networkIcons.find(item => key.search(item.name)> -1);
+    for (const key of Object.keys(this.networks.data)) {
+      const item = networkIcons.find(item => key.search(item.name) > -1);
 
-      this.networks['names'].push({
+      this.networks.names.push({
         name: key,
         value: key,
-        icon: (item) ? item['icon'] : false
+        icon: (item) ? item['icon'] : undefined
       })
     }
 
-    this.selectedNetwork = this.networks['names'][0];
+    this.selectedNetwork = this.networks.names[0];
     if (network) {
-      if (!Object.keys(this.networks['data']).find((key) => key.includes(network))) {
+      if (!Object.keys(this.networks.data).find((key) => key.includes(network))) {
         this.router.navigate(['/']);
-      }
-      else {
-        this.selectedNetwork = this.networks['names'].find(item => item.name.includes(network));
+      } else {
+        this.selectedNetwork = this.networks.names.find(item => item.name.includes(network));
       }
     }
   }
@@ -152,35 +152,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateData(): void {
- 
-   //this.map.setView([ 51.2, 7 ],4);
-  
-   this.ngOnDestroy();
-   this.initMap();
+    this.ngOnDestroy();
+    this.initMap();
 
-   //this.map.eachLayer(function (layer) {
-    //      console.log(layer['_latlng']);
-//	if(layer['_latlng']!=undefined)
-   //      layer.remove();
-  // });
+    let allNetworks: Array<NodeDetail> = [];
 
-    let allNetworks = [];
-
-   //this.map.removeLayer(this.markers);
-
-    //console.log("removing markers");
-    //this.markers.forEach(item => {
-     // item.removeFrom(this.map);
-   // });
-
-    if(this.selectedNetwork.value === 'all') {
+    if (this.selectedNetwork.value === 'all') {
       for (let name in this.networks.data) {
-        this.networks.data[name] = this.networks.data[name].map(v => ({...v, chain: name}));
-        allNetworks = allNetworks.concat(this.networks.data[name]);
+        this.networks.data[name].nodes = this.networks.data[name].nodes.map(v => ({...v, chain: name}));
+        allNetworks = allNetworks.concat(this.networks.data[name].nodes);
       }
     } else {
 
-      allNetworks = allNetworks.concat(this.networks.data[this.selectedNetwork.value]);
+      allNetworks = allNetworks.concat(this.networks.data[this.selectedNetwork.value].nodes);
       allNetworks = allNetworks.map(v => ({...v, chain: this.selectedNetwork.value}));
     }
 
@@ -199,13 +183,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalNodes = allNetworks.length;
 
     const sliceBy = 4;
-    let slicedData = this.tableData.slice(0,sliceBy);
+    let slicedData = this.tableData.slice(0, sliceBy);
     const others = this.tableData.slice(sliceBy, this.tableData.length);
     const otherNodesCount = others.map(item => item['nodes']).reduce((a, b) => a + b);
     this.pieChartLabels = slicedData.map(item => item['country']).concat(['Others']);
     this.pieChartData = slicedData.map(item => item['nodes']).concat([otherNodesCount]);
     this.chartColors = [
-      { backgroundColor: this.appService.getRandomColors(slicedData.length+1) }
+      {backgroundColor: this.appService.getRandomColors(slicedData.length + 1)}
     ];
 
     const markers = new L.MarkerClusterGroup();
@@ -218,16 +202,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       marker.bindPopup(`
         <p><b>Moniker: </b>${item.moniker}</p>
-        <p><b>NodeId: </b>${item.nodeId}</p>
+        <p><b>NodeId: </b>${item.node_id}</p>
         <p><b>Chain: </b>${item.chain}</p>
         <p><b>Country: </b>${item.country}</p>
         <p><b>ISP: </b>${item.isp}</p>
         <p><b>Data Center: </b>${item.as}</p>
       `);
-      
-	    markers.addLayer(marker);
-            this.markers.push(marker);
-});
+
+      markers.addLayer(marker);
+      this.markers.push(marker);
+    });
 
     //console.log(this.selectedNetwork);
     //console.log("adding markers");
@@ -249,4 +233,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map = undefined;
   }
 
+}
+
+interface Networks {
+  names: Array<NetworkDetail>
+  data: ChainsNodeList
+}
+
+interface NetworkDetail {
+  name: string;
+  value: string;
+  icon: string;
 }

@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {NavigationEnd, Router} from "@angular/router";
-import {filter} from "rxjs/operators";
+import {filter, map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
 
-  mapNetworkIcons = [
+  public mapNetworkIcons: Array<MapNetworkIcons> = [
     /**
      * name is the pretty name of the chain used in urls
      * chainUrl is the url path to append to https://validators.cosmos.directory/chains/{chainUrl} to retrieve chain details
@@ -41,8 +41,20 @@ export class AppService {
       });
   }
 
-  listNetworks(): Promise<any> {
-    return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
+  listNetworks(): Promise<ChainsNodeList> {
+    //return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
+    return this.http.get<any>('http://localhost:8090/api/peers').pipe(
+      map((payload: ChainsNodeList) => {
+        for (const chain in payload) {
+          payload[chain].nodes.map(value => {
+            if (value.last_seen === "0001-01-01T00:00:00Z") {
+              value.last_seen = "Long ago";
+            }
+          })
+        }
+        return payload
+      })
+    ).toPromise();
   }
 
   async listChains(chains): Promise<any> {
@@ -90,4 +102,34 @@ export class AppService {
   get previousNetwork(): string | undefined {
     return this._previousNetwork;
   }
+}
+
+export interface ChainsNodeList {
+  [key: string]: {
+    chainId: string;
+    prettyName: string;
+    nodes: Array<NodeDetail>;
+  }
+}
+
+export interface NodeDetail {
+  moniker: string;
+  node_id: string;
+  last_seen: string;
+  country: string;
+  region: string;
+  city: string;
+  lat: number;
+  lon: number;
+  isp: string;
+  org: string;
+  as: string;
+  // not from json but filled from javascript
+  chain: string
+}
+
+export interface MapNetworkIcons {
+  name: string;
+  icon: string;
+  chainUrl: string;
 }
