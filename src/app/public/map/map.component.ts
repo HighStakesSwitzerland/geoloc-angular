@@ -5,6 +5,8 @@ import {Label, SingleDataSet} from 'ng2-charts';
 import * as pluginLabels from 'chartjs-plugin-piechart-outlabels';
 import {AppService, ChainsNodeList, NodeDetail} from 'src/app/services/app.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {formatDate} from "@angular/common";
+import {find} from "rxjs/operators";
 
 @Component({
   selector: 'app-map',
@@ -119,7 +121,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const {network} = this.activatedRoute.snapshot.params;
 
-    this.networks.names = [{name: 'All Networks', value: 'all', icon: ''}];
+    this.networks.names = [{name: 'All Networks', value: 'all', icon: '', markerClassname: ''}];
     this.networks.data = await this.appService.listNetworks();
 
     for (const key of Object.keys(this.networks.data)) {
@@ -128,14 +130,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       this.networks.names.push({
         name: key,
         value: key,
-        icon: (item) ? item['icon'] : undefined
+        icon: item ? item['icon'] : undefined,
+        markerClassname: item['className']
       })
     }
 
     this.selectedNetwork = this.networks.names[0];
     if (network) {
       if (!Object.keys(this.networks.data).find((key) => key.includes(network))) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then();
       } else {
         this.selectedNetwork = this.networks.names.find(item => item.name.includes(network));
       }
@@ -155,21 +158,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ngOnDestroy();
     this.initMap();
 
-    let allNetworks: Array<NodeDetail> = [];
+    let nodeList: Array<NodeDetail> = [];
 
     if (this.selectedNetwork.value === 'all') {
       for (let name in this.networks.data) {
-        this.networks.data[name].nodes = this.networks.data[name].nodes.map(v => ({...v, chain: name}));
-        allNetworks = allNetworks.concat(this.networks.data[name].nodes);
+        this.networks.data[name].nodes = this.networks.data[name].nodes.map(v => ({...v, chain: name, className: this.networks.names.find(v => v.name === name)?.markerClassname}));
+        nodeList = nodeList.concat(this.networks.data[name].nodes);
       }
     } else {
-
-      allNetworks = allNetworks.concat(this.networks.data[this.selectedNetwork.value].nodes);
-      allNetworks = allNetworks.map(v => ({...v, chain: this.selectedNetwork.value}));
+      nodeList = nodeList.concat(this.networks.data[this.selectedNetwork.value].nodes);
+      nodeList = nodeList.map(v => ({...v, chain: this.selectedNetwork.value}));
     }
 
-
-    let formattedNodes = this.appService.groupBy(allNetworks, this.selectedCountry['groupBy']);
+    let formattedNodes = this.appService.groupBy(nodeList, this.selectedCountry['groupBy']);
 
     this.tableData = [];
     for (let country in formattedNodes) {
@@ -179,8 +180,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
 
-    this.dialogTableData = allNetworks;
-    this.totalNodes = allNetworks.length;
+    this.dialogTableData = nodeList;
+    this.totalNodes = nodeList.length;
 
     const sliceBy = 4;
     let slicedData = this.tableData.slice(0, sliceBy);
@@ -193,28 +194,30 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     const markers = new L.MarkerClusterGroup();
-    allNetworks.forEach(item => {
-      const markericon = L.icon({
-        iconUrl: `assets/markers/${item.chain}.png`
+    nodeList.forEach(item => {
+      const markerIcon = L.icon({
+        iconUrl: `assets/markers/marker.png`,
+        className: item.className ? item.className : this.selectedNetwork.markerClassname,
+        iconSize: [34, 43]
       });
       const marker = L.marker([item.lat, item.lon], {
-        icon: markericon
+        icon: markerIcon,
+        riseOnHover: true,
+        title: item.moniker
       });
       marker.bindPopup(`
         <p><b>Moniker: </b>${item.moniker}</p>
-        <p><b>NodeId: </b>${item.node_id}</p>
         <p><b>Chain: </b>${item.chain}</p>
         <p><b>Country: </b>${item.country}</p>
         <p><b>ISP: </b>${item.isp}</p>
         <p><b>Data Center: </b>${item.as}</p>
+        <p><b>Last Seen: </b>${formatDate(item.last_seen, "medium", "en-US", "UTC")}</p>
       `);
 
       markers.addLayer(marker);
       this.markers.push(marker);
     });
 
-    //console.log(this.selectedNetwork);
-    //console.log("adding markers");
     this.map.addLayer(markers);
 
     this.loadingMap = false;
@@ -244,4 +247,5 @@ interface NetworkDetail {
   name: string;
   value: string;
   icon: string;
+  markerClassname: string;
 }

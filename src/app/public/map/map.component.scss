@@ -4,6 +4,69 @@ $theme_color: #2d2755;
   height: 100%;
 }
 
+::ng-deep {
+  /* hue-rotate property changes the color of an image accoring to the passed value (0 and 360 = original color) */
+  .hue_0 {
+    filter: hue-rotate(0deg);
+  }
+
+  .hue_25 {
+    filter: hue-rotate(25deg);
+  }
+
+  .hue_50 {
+    filter: hue-rotate(50deg);
+  }
+
+  .hue_75 {
+    filter: hue-rotate(75deg);
+  }
+
+  .hue_100 {
+    filter: hue-rotate(100deg);
+  }
+
+  .hue_125 {
+    filter: hue-rotate(125deg);
+  }
+
+  .hue_150 {
+    filter: hue-rotate(150deg);
+  }
+
+  .hue_175 {
+    filter: hue-rotate(175deg);
+  }
+
+  .hue_200 {
+    filter: hue-rotate(200deg);
+  }
+
+  .hue_225 {
+    filter: hue-rotate(225deg);
+  }
+
+  .hue_250 {
+    filter: hue-rotate(250deg);
+  }
+
+  .hue_275 {
+    filter: hue-rotate(275deg);
+  }
+
+  .hue_300 {
+    filter: hue-rotate(300deg);
+  }
+
+  .hue_325 {
+    filter: hue-rotate(325deg);
+  }
+
+  .hue_350 {
+    filter: hue-rotate(350deg);
+  }
+}
+
 .pi-spinner {
   position: absolute;
     top: 50%;

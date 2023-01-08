@@ -13,18 +13,20 @@ export class AppService {
      * name is the pretty name of the chain used in urls
      * chainUrl is the url path to append to https://validators.cosmos.directory/chains/{chainUrl} to retrieve chain details
      * => make sure it's the correct url
+     *
+     * className is the css class to add to the pointer image to change it's color, see map.component.scss
      */
-    {name: 'columbus', icon: 'terra-classic.svg', chainUrl: 'terra'},
-    {name: 'osmosis', icon: 'osmosis.svg', chainUrl: 'osmosis'},
-    {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos'},
-    {name: 'sifchain', icon: 'sifchain.svg', chainUrl: 'sifchain'},
-    {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance'},
-    {name: 'injective', icon: 'injective.png', chainUrl: 'injective'},
-    {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet'},
-    {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmoshub'},
-    {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub'},
-    {name: 'core', icon: 'persistence.png', chainUrl: 'persistence'}
-
+    {name: 'columbus', icon: 'terra-classic.svg', chainUrl: 'terra', className: 'hue_0'},
+    {name: 'osmosis', icon: 'osmosis.svg', chainUrl: 'osmosis', className: 'hue_25'},
+    {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos', className: 'hue_50'},
+    {name: 'sifchain', icon: 'sifchain.svg', chainUrl: 'sifchain', className: 'hue_75'},
+    {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance', className: 'hue_100'},
+    {name: 'injective', icon: 'injective.png', chainUrl: 'injective', className: 'hue_125'},
+    {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet', className: 'hue_150'},
+    {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmoshub', className: 'hue_175'},
+    {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub', className: 'hue_200'},
+    {name: 'core', icon: 'persistence.png', chainUrl: 'persistence', className: 'hue_225'}
+    // ... continue with className hue_250 etc every 25, see map.component.scss
   ];
 
   private _currentNetwork: string | undefined;
@@ -43,18 +45,7 @@ export class AppService {
 
   listNetworks(): Promise<ChainsNodeList> {
     //return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
-    return this.http.get<any>('http://localhost:8090/api/peers').pipe(
-      map((payload: ChainsNodeList) => {
-        for (const chain in payload) {
-          payload[chain].nodes.map(value => {
-            if (value.last_seen === "0001-01-01T00:00:00Z") {
-              value.last_seen = "Long ago";
-            }
-          })
-        }
-        return payload
-      })
-    ).toPromise();
+    return this.http.get<any>('http://localhost:8090/api/peers').toPromise();
   }
 
   async listChains(chains): Promise<any> {
@@ -113,6 +104,7 @@ export interface ChainsNodeList {
 }
 
 export interface NodeDetail {
+  className: string;
   moniker: string;
   node_id: string;
   last_seen: string;
@@ -132,4 +124,5 @@ export interface MapNetworkIcons {
   name: string;
   icon: string;
   chainUrl: string;
+  className: string;
 }

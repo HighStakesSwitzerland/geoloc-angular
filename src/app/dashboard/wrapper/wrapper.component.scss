@@ -182,13 +182,17 @@ p-dropdown.networks-dropdown {
 }
 
 .table-heading {
-  margin: 60px 0 20px 0;
+  margin: 60px 0 0 0;
   font-size: 1.5rem;
+  color: #c3c5cb;
+}
+.table-subheading {
+  margin: 0 0 20px 0;
+  font-size: 0.8rem;
   color: #c3c5cb;
 }
 
 .table-header {
-
   display: flex;
   justify-content: flex-start;
 
