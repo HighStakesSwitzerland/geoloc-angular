@@ -48,7 +48,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     const route = this.router.routerState.snapshot.url.split('/');
     const network = (route.length > 2) ? route.pop() : undefined;
 
-    this.networks = [{name: 'All Networks', value: 'all', icon: ''}];
+    this.networks = [{name: 'All Networks', value: 'all', icon: {}}];
 
     this.networksData = await this.appService.listNetworks();
 
@@ -88,7 +88,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
         this.networksData[name].nodes = this.networksData[name].nodes.map(v => ({...v, chain: name}));
         allNetworks = allNetworks.concat(this.networksData[name].nodes);
       }
-      chains = this.networks.map(item => item.icon.chainUrl);
+      chains = this.networks.map(item => item.icon?.chainUrl);
       chains.shift();
     } else {
       allNetworks = allNetworks.concat(this.networksData[this.selectedNetwork.value].nodes);
@@ -100,10 +100,10 @@ export class WrapperComponent implements OnInit, OnDestroy {
 
 
     if (this.selectedNetwork.value === 'all') {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard']).then();
     } else {
       const routePrettyName = this.selectedNetwork.name.substring(0, this.selectedNetwork.name.lastIndexOf('-'));
-      this.router.navigate([`/dashboard/${routePrettyName}`]);
+      this.router.navigate([`/dashboard/${routePrettyName}`]).then();
     }
 
     const validators = await this.appService.listChains(chains);

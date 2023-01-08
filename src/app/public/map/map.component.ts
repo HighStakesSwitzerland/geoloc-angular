@@ -131,7 +131,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         name: key,
         value: key,
         icon: item ? item['icon'] : undefined,
-        markerClassname: item['className']
+        markerClassname: item ? item['className'] : ""
       })
     }
 

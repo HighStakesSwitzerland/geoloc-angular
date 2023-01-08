@@ -25,7 +25,12 @@ export class AppService {
     {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet', className: 'hue_150'},
     {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmoshub', className: 'hue_175'},
     {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub', className: 'hue_200'},
-    {name: 'core', icon: 'persistence.png', chainUrl: 'persistence', className: 'hue_225'}
+    {name: 'core', icon: 'persistence.png', chainUrl: 'persistence', className: 'hue_225'},
+
+    {name: 'band', icon: 'band.png', chainUrl: 'bandchain', className: 'hue_250'},
+    {name: 'sentinel', icon: 'sentinel.png', chainUrl: 'sentinel', className: 'hue_275'},
+    {name: 'okp4', icon: 'okp4.png', chainUrl: '' /* TODO */, className: 'hue_300'}
+
     // ... continue with className hue_250 etc every 25, see map.component.scss
   ];
 
@@ -49,10 +54,11 @@ export class AppService {
   }
 
   async listChains(chains): Promise<any> {
+    const urls = chains.filter(v => v != "")
     const httpCalls = [];
-    for (let i = 0; i < chains.length; i++) {
+    for (let i = 0; i < urls.length; i++) {
       httpCalls.push(
-        this.http.get(`https://validators.cosmos.directory/chains/${chains[i]}`).toPromise()
+        this.http.get(`https://validators.cosmos.directory/chains/${urls[i]}`).toPromise()
       );
     }
 
