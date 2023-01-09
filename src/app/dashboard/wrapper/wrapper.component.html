@@ -61,7 +61,7 @@
         </span>
       </div>
 
-      <p-table class="dialog-table" #dt [loading]="loadingTable" [columns]="cols" [sortField]="'last_seen'" [sortOrder]="1" [value]="tableData" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+      <p-table class="dialog-table" #dt [loading]="loadingTable" [columns]="cols" [sortField]="'last_seen'" [sortOrder]="-1" [value]="tableData" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
         [filterDelay]="0" [globalFilterFields]="['moniker','node_id','chain','country', 'isp', 'as', 'last_seen']">
         <ng-template pTemplate="header" let-columns>
             <tr>
