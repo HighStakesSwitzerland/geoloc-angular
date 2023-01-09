@@ -121,7 +121,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const {network} = this.activatedRoute.snapshot.params;
 
-    this.networks.names = [{name: 'All Networks', value: 'all', icon: '', markerClassname: ''}];
+    this.networks.names = [{name: 'All Networks', value: 'all', icon: 'all.png', markerClassname: ''}];
     this.networks.data = await this.appService.listNetworks();
 
     for (const key of Object.keys(this.networks.data)) {

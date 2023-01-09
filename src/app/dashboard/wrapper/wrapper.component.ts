@@ -48,7 +48,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     const route = this.router.routerState.snapshot.url.split('/');
     const network = (route.length > 2) ? route.pop() : undefined;
 
-    this.networks = [{name: 'All Networks', value: 'all', icon: {}}];
+    this.networks = [{name: 'All Networks', value: 'all', icon: 'all.png'}];
 
     this.networksData = await this.appService.listNetworks();
 
@@ -69,7 +69,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     if (network) {
       const found = this.networks.find(item => item.name.includes(network))
       if (found === undefined) {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']).then();
       } else {
         this.selectedNetwork = found;
       }
@@ -93,7 +93,7 @@ export class WrapperComponent implements OnInit, OnDestroy {
     } else {
       allNetworks = allNetworks.concat(this.networksData[this.selectedNetwork.value].nodes);
       allNetworks = allNetworks.map(v => ({...v, chain: this.selectedNetwork.value}));
-      chains = [this.selectedNetwork.icon.chainUrl];
+      chains = [this.selectedNetwork.icon?.chainUrl];
     }
 
     this.tableData = allNetworks;

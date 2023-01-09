@@ -17,17 +17,15 @@ export class AppService {
      * className is the css class to add to the pointer image to change it's color, see map.component.scss
      */
     {name: 'columbus', icon: 'terra-classic.svg', chainUrl: 'terra', className: 'hue_0'},
-    {name: 'osmosis', icon: 'osmosis.svg', chainUrl: 'osmosis', className: 'hue_25'},
-    {name: 'desmos', icon: 'desmos.svg', chainUrl: 'desmos', className: 'hue_50'},
-    {name: 'sifchain', icon: 'sifchain.svg', chainUrl: 'sifchain', className: 'hue_75'},
+    {name: 'osmosis', icon: 'osmosis.png', chainUrl: 'osmosis', className: 'hue_25'},
+    {name: 'desmos', icon: 'desmos.png', chainUrl: 'desmos', className: 'hue_50'},
     {name: 'pio-mainnet', icon: 'provenance.png', chainUrl: 'provenance', className: 'hue_100'},
     {name: 'injective', icon: 'injective.png', chainUrl: 'injective', className: 'hue_125'},
     {name: 'irishub', icon: 'iris.svg', chainUrl: 'irisnet', className: 'hue_150'},
     {name: 'cosmos', icon: 'cosmos.svg', chainUrl: 'cosmoshub', className: 'hue_175'},
     {name: 'fetchhub', icon: 'fetchai.png', chainUrl: 'fetchhub', className: 'hue_200'},
     {name: 'core', icon: 'persistence.png', chainUrl: 'persistence', className: 'hue_225'},
-
-    {name: 'band', icon: 'band.png', chainUrl: 'bandchain', className: 'hue_250'},
+    {name: 'laozi', icon: 'band.png', chainUrl: 'bandchain', className: 'hue_250'},
     {name: 'sentinel', icon: 'sentinel.png', chainUrl: 'sentinel', className: 'hue_275'},
     {name: 'okp4', icon: 'okp4.png', chainUrl: '' /* TODO */, className: 'hue_300'}
 
@@ -49,17 +47,17 @@ export class AppService {
   }
 
   listNetworks(): Promise<ChainsNodeList> {
-    //return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
-    return this.http.get<any>('http://localhost:8090/api/peers').toPromise();
+    return this.http.get<any>('https://tools.highstakes.ch/geoloc-api/peers').toPromise();
   }
 
   async listChains(chains): Promise<any> {
-    const urls = chains.filter(v => v != "")
     const httpCalls = [];
-    for (let i = 0; i < urls.length; i++) {
-      httpCalls.push(
-        this.http.get(`https://validators.cosmos.directory/chains/${urls[i]}`).toPromise()
-      );
+    for (let i = 0; i < chains.length; i++) {
+      if (chains[i] != undefined && chains[i] != "") {
+        httpCalls.push(
+          this.http.get(`https://validators.cosmos.directory/chains/${chains[i]}`).toPromise()
+        );
+      }
     }
 
     let chainValidators = Promise.all(httpCalls);

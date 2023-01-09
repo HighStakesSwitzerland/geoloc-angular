@@ -42,7 +42,7 @@
         </div>
         <div class="networks">
           <p class="text">Total Validators from Cosmos Directory</p>
-          <p class="count">{{ totalValidators }}</p>
+          <p class="count">{{ totalValidators }}&nbsp;<i *ngIf="totalValidators === 0" class="pi pi-info-circle" pTooltip="Chain is not yet registered in Cosmos Directory"></i></p>
         </div>
       </div>
     </div>
