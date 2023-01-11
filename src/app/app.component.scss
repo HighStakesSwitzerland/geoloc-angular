@@ -1,3 +1,15 @@
 #app-wrapper {
   height: 100%;
 }
+
+::ng-deep {
+
+  .footer-text {
+    font-size: 12px;
+    color: darkgoldenrod;
+    text-align: center;
+    position: relative;
+    padding-top: 8px;
+  }
+
+}
