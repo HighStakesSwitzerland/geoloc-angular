@@ -1,12 +1,10 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import * as L from 'leaflet';
-import {ChartOptions, ChartType} from 'chart.js';
-import {Label, SingleDataSet} from 'ng2-charts';
-import * as pluginLabels from 'chartjs-plugin-piechart-outlabels';
+import {ChartOptions, ChartData, ChartType} from 'chart.js';
+import * as pluginLabels from '@energiency/chartjs-plugin-piechart-outlabels';
 import {AppService, ChainsNodeList, NodeDetail} from 'src/app/services/app.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {formatDate} from "@angular/common";
-import {find} from "rxjs/operators";
 
 @Component({
   selector: 'app-map',
@@ -29,8 +27,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   showDiaglog: boolean = false;
   map;
   pieChartOptions: ChartOptions;
-  pieChartLabels: Label[];
-  pieChartData: SingleDataSet;
+  pieChartLabels: string[];
+  pieChartData: ChartData;
   pieChartType: ChartType;
   pieChartLegend: boolean;
   pieChartPlugins = [];
@@ -81,25 +79,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pieChartLegend = true;
     this.pieChartPlugins = [pluginLabels];
 
+    // @ts-ignore
     this.pieChartOptions = {
-      rotation: 0.5 * Math.PI - (70 / 180) * Math.PI,
-      responsive: true,
-      maintainAspectRatio: true,
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 40,
-          bottom: 30,
-        },
-      },
-      legend: {
-        display: false
-      },
       plugins: {
-        devicePixelRatio: -1,
+        // @ts-ignore
+        legend: true,
         outlabels: {
-          display: true,
           text: '%l %p',
           color: 'black',
           padding: 4,
@@ -188,7 +173,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     const others = this.tableData.slice(sliceBy, this.tableData.length);
     const otherNodesCount = others.map(item => item['nodes']).reduce((a, b) => a + b);
     this.pieChartLabels = slicedData.map(item => item['country']).concat(['Others']);
-    this.pieChartData = slicedData.map(item => item['nodes']).concat([otherNodesCount]);
+    this.pieChartData = {
+      datasets: [{
+        data: slicedData.map(item => item['nodes']).concat([otherNodesCount]),
+        backgroundColor: this.chartColors
+      }],
+      labels: this.pieChartLabels
+    };
     this.chartColors = [
       {backgroundColor: this.appService.getRandomColors(slicedData.length + 1)}
     ];

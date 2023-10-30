@@ -4,14 +4,16 @@
       <img *ngIf="selectedNetwork?.icon" [src]="'assets/images/' + selectedNetwork?.icon">
       <p class="main-heading">{{ selectedNetwork?.name }}</p>
     </div>
-    <button pButton type="button" icon="pi pi-angle-left" class="btn-sidebar" (click)="hideSidebar = !hideSidebar"></button>
+    <p-button type="button" icon="pi pi-angle-left" class="btn-sidebar" (click)="hideSidebar = !hideSidebar"></p-button>
   </div>
 
   <div class="body">
     <p class="stat-text">STATS FOR THE WHOLE WORLD:</p>
     <p class="total-nodes">NUMBER OF NODES: {{ totalNodes }}</p>
 
-    <p-dropdown class="countries-dropdown" [options]="countries" [(ngModel)]="selectedCountry" (onChange)="updateData()" optionLabel="name"></p-dropdown>
+    <p-dropdown class="countries-dropdown" [options]="countries" [(ngModel)]="selectedCountry" (onChange)="updateData()" optionLabel="name">
+
+    </p-dropdown>
 
     <p-table [value]="tableData" [paginator]="true" [rows]="5" [showCurrentPageReport]="true">
         <ng-template pTemplate="header">
@@ -29,17 +31,16 @@
     </p-table>
 
     <p id="pieChart-title">Concentration Chart</p>
-    <div style="width: 100%; margin:auto;">
+    <div style="width: 80%; margin:auto;">
       <canvas
       *ngIf="pieChartData"
       id="pieChart"
       baseChart
       [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [chartType]="pieChartType"
+      [type]="pieChartType"
       [options]="pieChartOptions"
       [plugins]="pieChartPlugins"
-      [colors]="chartColors"></canvas>
+      ></canvas>
     </div>
 
     <p-button class="btn-more-details" (click)="showDiaglog=true;" label="More Details" icon="pi pi-info-circle"></p-button>
@@ -85,7 +86,7 @@
       <div class="table-header">
           <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
-              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+              <input pInputText type="text" (input)="dt.filterGlobal($event, 'contains')" placeholder="Global Search" />
           </span>
       </div>
     </ng-template>

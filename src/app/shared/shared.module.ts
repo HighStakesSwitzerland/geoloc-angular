@@ -7,12 +7,12 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { DialogModule } from 'primeng/dialog';
 import { LeafletMarkerClusterModule } from '@asymmetrik/ngx-leaflet-markercluster';
-import { ChartsModule } from 'ng2-charts';
 import { SidebarModule } from 'primeng/sidebar';
+import {NgChartsModule} from "ng2-charts";
 
 const MODULES = [
   FormsModule,
-  ChartsModule,
+  NgChartsModule,
   LeafletMarkerClusterModule,
   SidebarModule,
   DropdownModule,
